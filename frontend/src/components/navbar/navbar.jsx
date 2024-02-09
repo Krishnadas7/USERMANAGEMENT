@@ -1,7 +1,27 @@
 import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useLogoutMutation } from "../../slices/userApiSlice"
+import {logout} from '../../slices/authSlice'
+import { Link, useNavigate } from "react-router-dom"
+
 
 function Navbar(){
     const [dropdown,setDropdown]=useState(false)
+    const {userInfo} = useSelector((state)=>state.auth)
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const [logoutApiCall] = useLogoutMutation()
+    const logoutHandler =async ()=>{
+      try {
+        await logoutApiCall().unwrap()
+        dispatch(logout())
+        navigate('/')
+      } catch (err) {
+        
+      }
+    }
+
     return(
         <>
         <nav className="bg-gray-800">
@@ -39,27 +59,29 @@ function Navbar(){
           <span className="absolute -inset-1.5"></span>
           <span className="sr-only">View notifications</span>
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            {/* <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /> */}
           </svg>
         </button>
-
-        <div className="relative ml-3">
+       {userInfo ? (<div className="relative ml-3">
           <div onClick={()=>setDropdown(!dropdown)}>
-            <button type="button" className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-              <span className="absolute -inset-1.5"></span>
+            <button type="button" className="relative flex  bg-gray-800 text-sm focus:outline-none  text-white  focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
               <span className="sr-only">Open user menu</span>
-              <img  className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+            <b> {userInfo.name}</b>
             </button>
           </div>
 
         {
             dropdown ? ( <div onClick={()=>setDropdown(!dropdown)} className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0"><Link to='/profile'> Profile</Link></a>
+            <a onClick={logoutHandler} className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Log out</a>
           </div>) : ''
         }
          
-        </div>
+        </div>) : (<button  type="button" className="relative flex  bg-gray-800 text-sm focus:outline-none  text-white  focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+              <span className="sr-only">Open user menu</span>
+            <Link to='/login'>Login </Link>
+            </button>)}
+        
       </div>
     </div>
   </div>

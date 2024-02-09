@@ -1,14 +1,35 @@
-import React,{useState} from 'react'
-import { Link } from 'react-router-dom'
+import React,{useState,useEffect} from 'react'
+import { Link,useNavigate } from 'react-router-dom'
+import { useDispatch,useSelector } from 'react-redux'
+import { useLoginMutation } from '../../slices/userApiSlice'
+import { setCredentials } from '../../slices/authSlice'
+import {toast} from 'react-toastify'
+
 import './login.css'
 const Login = () => {
     const [email,setEmail] = useState('')
     const [password,setPassword]=useState('')
 
-    const submitHandler=(e)=>{
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const [login,{isLoading}] = useLoginMutation()
+    const {userInfo} = useSelector((state)=>state.auth)
+    useEffect(()=>{
+        if(userInfo){
+         navigate('/')
+        }
+    },[navigate,userInfo])
+
+    const submitHandler=async (e)=>{
       
         e.preventDefault()
-        console.log(email,password);
+        try {
+            const res = await login({email,password}).unwrap()
+            dispatch(setCredentials({...res}))
+            navigate('/')
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
     }
   return (
     <>
@@ -21,7 +42,7 @@ const Login = () => {
           <p className="page-link">
             <span className="page-link-label">Forgot Password?</span>
           </p>
-          <button type='submit'  className="form-btn bg-teal-400">Log in</button>
+          <button type='submit'  className="form-btn bg-black">Log in</button>
         </form>
         <p className="sign-up-label">
           Don't have an account?<span className="sign-up-link"><Link to='/signup'> Sign up</Link> </span>

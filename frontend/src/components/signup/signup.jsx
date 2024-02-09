@@ -1,19 +1,53 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React,{useState,useEffect} from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useRegisterMutation } from '../../slices/userApiSlice'
+import {toast} from 'react-toastify'
+import { setCredentials } from '../../slices/authSlice'
+import {useDispatch,useSelector } from 'react-redux'
+
+
 const Signup = () => {
+    const [name,setName] = useState('')
+    const [email,setEmail] = useState('')
+    const [password,setPassword] = useState('')
+    const [register] = useRegisterMutation()
+    const {userInfo} = useSelector((state)=>state.auth)
+    const navigate =useNavigate()
+   const dispatch = useDispatch()
+
+    useEffect(()=>{
+        if(userInfo){
+            navigate('/')
+        }
+    },[navigate,userInfo])
+
+   
+    const handleSubmit = async (e)=>{
+        e.preventDefault()
+        try {
+            const res = await register({name,email,password}).unwrap()
+            dispatch(setCredentials({...res}))
+            navigate('/')
+
+        } catch (err) {
+           toast.error(err?.data?.message || err.error)   
+        }
+        
+    }
+
   return (
     <>
     <div className="flex justify-center align-middle items-center">
         <div className="form-container mt-6 ">
     <p className="title">Sign up</p>
-    <form className="form">
-        <input type="text" className="input" placeholder="Full Name" />
-        <input type="email" className="input" placeholder="Email" />
-        <input type="password" className="input" placeholder="Password" />
+    <form className="form" onSubmit={handleSubmit}>
+        <input type="text" className="input" value={name} onChange={()=>setName(event.target.value)} placeholder="Full Name" />
+        <input type="email" className="input" value={email} onChange={()=>setEmail(event.target.value)} placeholder="Email" />
+        <input type="password" className="input" value={password} onChange={()=>setPassword(event.target.value)} placeholder="Password" />
         <p className="page-link">
             <span className="page-link-label"> <Link to='/login'>Already have an account?</Link></span>
         </p>
-        <button  className="form-btn"> Sign up</button>
+        <button type='submit' className="form-btn bg-black"> Sign up</button>
     </form>
     <p className="sign-up-label">
         By signing up, you agree to our <a href="#" className="sign-up-link">Terms</a> and <a href="#" className="sign-up-link">Privacy Policy</a>.
