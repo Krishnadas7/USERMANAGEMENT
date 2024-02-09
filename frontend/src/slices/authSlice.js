@@ -20,8 +20,20 @@ const authSlice = createSlice({
         logout: (state,action) =>{
             state.userInfo = null
             localStorage.removeItem('userInfo')
-        }
+        },
+        setadminCredentials: (state, action) => {
+          try {
+            state.adminInfo = action.payload;
+            localStorage.setItem('adminInfo', JSON.stringify(action.payload));
+          } catch (error) {
+            console.error('Error storing user information in localStorage:', error);
+          }
+        },
+        adminLogout: (state,action) =>{
+          state.adminInfo = null
+          localStorage.removeItem('adminInfo')
+      },
     }
 })
-export const {setCredentials,logout} = authSlice.actions
+export const {setCredentials,logout,setadminCredentials,adminLogout} = authSlice.actions
 export default authSlice.reducer

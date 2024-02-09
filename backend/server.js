@@ -2,6 +2,7 @@ import  express  from "express";
 import mongoose from "mongoose";
 import dotenv from 'dotenv'
 import userRouter from './routes/userRoutes.js'
+import adminRouter from './routes/adminRoute.js'
 import { notFound,errorHandler } from "./middleware/errorMiddleware.js";
 import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
@@ -13,6 +14,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 connectDb()
 app.use('/api/users',userRouter)
+app.use('/api/admin',adminRouter)
 
 app.get('/',(req,res)=>{
     res.send('server is ready')
