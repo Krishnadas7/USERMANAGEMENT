@@ -3,7 +3,7 @@ import { Navigate,Outlet } from 'react-router-dom'
 import {  useSelector } from 'react-redux'
 
 const adminPrivateRouter = () => {
-  const {adminInfo} = useSelector((state)=>state.auth)
+  const {adminInfo} = useSelector((state)=>state.admin)
   return adminInfo ? <Outlet/> : <Navigate to='/admin' replace/>
 }
 

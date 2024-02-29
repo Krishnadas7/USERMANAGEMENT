@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState ={
     userInfo : localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
-
+    
 }
 
 const authSlice = createSlice({
@@ -21,19 +21,25 @@ const authSlice = createSlice({
             state.userInfo = null
             localStorage.removeItem('userInfo')
         },
-        setadminCredentials: (state, action) => {
-          try {
-            state.adminInfo = action.payload;
-            localStorage.setItem('adminInfo', JSON.stringify(action.payload));
-          } catch (error) {
-            console.error('Error storing user information in localStorage:', error);
-          }
-        },
-        adminLogout: (state,action) =>{
-          state.adminInfo = null
-          localStorage.removeItem('adminInfo')
+        // setadminCredentials: (state, action) => {
+        //   try {
+        //     state.adminInfo = action.payload;
+        //     localStorage.setItem('adminInfo', JSON.stringify(action.payload));
+        //   } catch (error) {
+        //     console.error('Error storing user information in localStorage:', error);
+        //   }
+        // },
+      //   adminLogout: (state,action) =>{
+      //     state.adminInfo = null
+      //     localStorage.removeItem('adminInfo')
+      // },
+      increment:(state,action) =>{
+        state+1
       },
+      decrement:(state,action)=>{
+        state-1
+      }
     }
 })
-export const {setCredentials,logout,setadminCredentials,adminLogout} = authSlice.actions
+export const {setCredentials,logout,increment,decrement} = authSlice.actions
 export default authSlice.reducer

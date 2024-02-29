@@ -8,7 +8,8 @@ const adminSchema=mongoose.Schema({
    password:{
     type:String,
     // required:true
-   }
+   },
+  
 })
 adminSchema.methods.matchPasswords = async function (enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password)

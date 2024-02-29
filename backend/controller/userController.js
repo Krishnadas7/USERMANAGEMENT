@@ -11,7 +11,8 @@ const authUser =asyncHandler(async (req,res) =>{
         res.status(201).json({
             id:user._id,
             name:user.name,
-            email:user.email
+            email:user.email,
+            profileImg:user.profileImg||""
         })
     }else{
         res.status(401).json({message:'invalid email or password'})
@@ -52,6 +53,7 @@ const logoutUser = asyncHandler(async (req,res)=>{
 
     res.status(200).json({message:'user logged out'})
 })
+
 const getUserProfile = asyncHandler(async (req,res)=>{
     const user={
         _id:req.user._id,
@@ -83,11 +85,44 @@ const updateUserProfile = asyncHandler(async (req,res)=>{
 
     res.status(200).json({message:'update profile'})
 })
+const setUserProfile = asyncHandler(async (req, res) => {
+    console.log('admincontrollerimage');
+    try {
+        const { userId } = req.body; 
+        console.log('userId:', userId);
+        
+        // Ensure userId is properly extracted from the formData
+        const user = await User.findById(userId);
+        console.log('userdetailforiamge:', user);
 
+        if (!user) {
+            res.status(404);
+            throw new Error('User not found');
+        }
+
+        if (req.file) { 
+            user.profileImg = req.file.filename; 
+        }
+        
+        await user.save();
+
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            mobile: user.mobile,  
+            profileImg: user.profileImg
+        });
+    } catch (error) {
+        console.error('Error setting profile image:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 export {
     authUser,
     registerUser,
     logoutUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    setUserProfile
 }

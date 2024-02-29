@@ -1,18 +1,21 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useAdminLogoutMutation } from "../../slices/adminApiSlice"
-import { adminLogout } from "../../slices/authSlice"
+// import { adminLogout } from "../../slices/authSlice"
+import { adminLogout } from "../../slices/aminSlice"
 import { Link, useNavigate,useLocation } from "react-router-dom"
 import { toast } from "react-toastify"
 import AdminDashboard from "../adminDashboard/adminDashboard"
 
 function AdminProfile(){
+  console.log('admin prof');
     const [dropdown,setDropdown]=useState(false)
-    const {adminInfo} = useSelector((state)=>state.auth)
+    const {adminInfo} = useSelector((state)=>state.admin)
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [logoutApiCall] = useAdminLogoutMutation()
+
     const logoutHandler =async ()=>{
       try {
         await logoutApiCall().unwrap()
@@ -68,7 +71,7 @@ function AdminProfile(){
             <button type="button" className="relative flex  bg-gray-800 text-sm focus:outline-none  text-white  focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
               <span className="sr-only">Open user menu</span>
             <b> {adminInfo.email}</b>
-            </button>
+            </button> 
           </div>
 
         {

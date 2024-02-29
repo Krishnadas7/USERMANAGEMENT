@@ -3,6 +3,7 @@ import { Link,useNavigate } from 'react-router-dom'
 import { useDispatch,useSelector } from 'react-redux'
 import { useLoginMutation } from '../../slices/userApiSlice'
 import { setCredentials } from '../../slices/authSlice'
+
 import {toast} from 'react-toastify'
 
 import './login.css'
@@ -14,6 +15,7 @@ const Login = () => {
     const dispatch = useDispatch()
     const [login,{isLoading}] = useLoginMutation()
     const {userInfo} = useSelector((state)=>state.auth)
+      console.log('userInfo',userInfo);
     useEffect(()=>{
         if(userInfo){
          navigate('/')

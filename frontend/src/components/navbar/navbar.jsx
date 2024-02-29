@@ -3,11 +3,43 @@ import { useDispatch, useSelector } from "react-redux"
 import { useLogoutMutation } from "../../slices/userApiSlice"
 import {logout} from '../../slices/authSlice'
 import { Link, useNavigate } from "react-router-dom"
-
+import { useLocation } from "react-router-dom"
+import { increment,decrement } from "../../slices/counterSlice"
 
 function Navbar(){
     const [dropdown,setDropdown]=useState(false)
     const {userInfo} = useSelector((state)=>state.auth)
+    const {count}=useSelector((state)=>state.counter)
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [error, setError] = useState(null);
+     const location = useLocation()
+     const isHome= location.pathname=='/'
+    const handleChange = (event) => {
+      setSearchTerm(event.target.value);
+    };
+  const array=[1,2,34,]
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      if (!searchTerm.trim()) {
+        // setError('Please enter a search term');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${searchTerm}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setSearchResults(data);
+        setError(null);
+      } catch (error) {
+        // console.error('Error fetching data:', error);
+        // setError('Failed to fetch data. Please try again later.');
+      }
+    };
+  
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -95,6 +127,55 @@ function Navbar(){
     </div>
   </div>
 </nav>
+{isHome && (<div>
+<form onSubmit={handleSubmit} className="flex items-center mt-3 justify-center">
+  <textarea
+    value={searchTerm}
+    onChange={handleChange}
+    className="w-64 h-12 px-4 py-2 text-lg border rounded-md mr-2 focus:outline-none focus:border-blue-500"
+    placeholder="Enter a word..."
+  ></textarea>
+  <button
+    type="submit"
+    className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+  >
+    Search
+  </button>
+
+
+
+
+   <button onClick={()=>{
+    dispatch(increment())
+   }} >increment</button>
+   <span>{count}</span>
+   <button onClick={()=>{
+    dispatch(decrement())
+   }}
+   >decrecrement</button>
+
+
+</form>
+      {error && <p>{error}</p>}
+      {searchResults.length > 0 && (
+       <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md">
+       <h2 className="text-2xl font-bold mb-4">Word: {searchResults[0].word}</h2>
+       <p className="text-lg">Phonetic: {searchResults[0].phonetic}</p>
+       <ul className="mt-4">
+         {searchResults[0].meanings.map((meaning, index) => (
+           <li key={index} className="mb-4">
+             <h3 className="text-lg font-semibold">Part of Speech: {meaning.partOfSpeech}</h3>
+             <p className="text-base mt-1">Definition: {meaning.definitions[0].definition}</p>
+             <p className="text-base mt-1">Example: {meaning.definitions[0].example}</p>
+           </li>
+         ))}
+       </ul>
+     </div>
+     
+      )}
+    </div>)}
+
+
         </>
     )
 }

@@ -24,14 +24,33 @@ const Signup = () => {
    
     const handleSubmit = async (e)=>{
         e.preventDefault()
+
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[a-zA-Z0-9]).{6,}$/;
+        const mobileRegex = /^(?![0-5])\d{10}$/;
+        const nameRegex = /^[^\s]+(\s[^\s]+)*$/;
+    
+        // Check if any field is empty
+        if (!name || !email || !password) {
+          toast.error("All fields should be filled");
+        } else if (!name.match(nameRegex)) {
+            toast.error("Name cannot contain consecutive spaces");
+        }  else if (!email.match(emailRegex)) {
+              toast.error("Invalid email address");
+        } else if (!password.match(passwordRegex)) {
+          toast.error(
+            "Password must be at least 6 characters and contain at least one special character"
+          );
+        }  else {
         try {
             const res = await register({name,email,password}).unwrap()
             dispatch(setCredentials({...res}))
-            navigate('/')
+            navigate('/login')
 
         } catch (err) {
            toast.error(err?.data?.message || err.error)   
         }
+    }
         
     }
 
